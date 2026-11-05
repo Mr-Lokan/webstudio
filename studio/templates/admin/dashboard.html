@@ -1,0 +1,91 @@
+{% extends 'admin/base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Дашборд{% endblock %}
+{% block heading %}Дашборд{% endblock %}
+{% block content %}
+<div class="stats">
+  <div class="stat"><span class="stat__label">Всего заказов</span><strong>{{ total }}</strong></div>
+  <div class="stat stat--accent"><span class="stat__label">В активной работе</span><strong>{{ active }}</strong></div>
+  {% if is_admin %}
+    <div class="stat"><span class="stat__label">Выручка за месяц</span><strong>{{ finance.month|money }}</strong></div>
+    <div class="stat"><span class="stat__label">Выручка всего</span><strong>{{ finance.total|money }}</strong></div>
+    <div class="stat {{ 'stat--warn' if finance.debt }}"><span class="stat__label">Дебиторская задолженность</span><strong>{{ finance.debt|money }}</strong></div>
+    <div class="stat"><span class="stat__label">Клиентов</span><strong>{{ finance.clients }}</strong></div>
+  {% else %}
+    <div class="stat"><span class="stat__label">Завершено</span><strong>{{ by_status.get('done', 0) }}</strong></div>
+    <div class="stat {{ 'stat--warn' if overdue }}"><span class="stat__label">Просрочено</span><strong>{{ overdue|length }}</strong></div>
+  {% endif %}
+</div>
+
+<div class="dash-grid">
+  {% if is_admin %}
+  <section class="panel">
+    <div class="panel__head"><h2>Поступления за 6 месяцев</h2></div>
+    <div class="bar-chart">
+      {% for label, value in revenue %}
+        <div class="bar-chart__col" title="{{ value|money }}">
+          <span class="bar-chart__value">{{ (value / 1000)|round|int }}к</span>
+          <div class="bar-chart__bar" style="height: {{ (value / revenue_max * 100)|round(1) }}%"></div>
+          <span class="bar-chart__label">{{ label }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="panel">
+    <div class="panel__head"><h2>Заказы по статусам</h2></div>
+    <ul class="hbar">
+      {% for key, label, count in status_chart %}
+        <li>
+          <a href="{{ url_for('admin.orders', status=key) }}">{{ label }}</a>
+          <div class="hbar__track"><div class="hbar__fill badge--{{ key }}" style="width: {{ (count / (total or 1) * 100)|round(1) }}%"></div></div>
+          <strong>{{ count }}</strong>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  {% if is_admin %}
+  <section class="panel">
+    <div class="panel__head"><h2>Загрузка дизайнеров</h2></div>
+    <table class="table table--compact">
+      <thead><tr><th>Сотрудник</th><th class="num">В работе</th><th class="num">Сдано</th></tr></thead>
+      <tbody>
+      {% for d in workload %}
+        <tr>
+          <td><a href="{{ url_for('admin.orders', designer=d.id) }}" class="user-cell">{{ m.avatar(d.name, 'avatar--sm') }}<span>{{ d.name }}<small class="muted">{{ d.position }}</small></span></a></td>
+          <td class="num"><strong>{{ d.active }}</strong></td>
+          <td class="num">{{ d.done }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="panel">
+    <div class="panel__head"><h2>Популярные услуги</h2></div>
+    <table class="table table--compact">
+      <thead><tr><th>Услуга</th><th class="num">Заказов</th><th class="num">Сумма</th></tr></thead>
+      <tbody>
+      {% for p in popular %}
+        <tr><td>{{ p.title }}</td><td class="num">{{ p.cnt }}</td><td class="num">{{ p.amount|money }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
+
+  <section class="panel panel--wide">
+    <div class="panel__head"><h2>Последние заказы</h2><a href="{{ url_for('admin.orders') }}">Все заказы →</a></div>
+    {% include 'admin/_orders_table.html' with context %}
+  </section>
+
+  {% if overdue %}
+  <section class="panel panel--wide panel--danger">
+    <div class="panel__head"><h2>Просроченные заказы</h2></div>
+    {% with orders = overdue %}{% include 'admin/_orders_table.html' with context %}{% endwith %}
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

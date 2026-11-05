@@ -1,0 +1,36 @@
+{% extends 'admin/base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}{{ 'Редактирование работы' if work else 'Новая работа' }}{% endblock %}
+{% block heading %}<a href="{{ url_for('admin.portfolio') }}" class="muted">Портфолио</a> / {{ work.title if work else 'Новая работа' }}{% endblock %}
+{% block content %}
+<section class="panel panel--form">
+  <form method="post" class="form" enctype="multipart/form-data">
+    {{ m.csrf() }}
+    <div class="form-row form-row--2">
+      <label>Название *<input type="text" name="title" value="{{ form.get('title', '') }}" required maxlength="150"></label>
+      <label>Клиент<input type="text" name="client" value="{{ form.get('client') or '' }}" maxlength="150"></label>
+    </div>
+    <div class="form-row form-row--3">
+      <label>Категория
+        <select name="category_id">
+          <option value="">— без категории —</option>
+          {% for c in categories %}<option value="{{ c.id }}" {{ 'selected' if form.get('category_id')|string == c.id|string }}>{{ c.name }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>Год<input type="number" name="year" min="2000" max="2100" value="{{ form.get('year') or '' }}"></label>
+      <label>Ссылка на проект<input type="url" name="url" value="{{ form.get('url') or '' }}" placeholder="https://"></label>
+    </div>
+    <div class="form-row"><label>Описание<textarea name="description" rows="6">{{ form.get('description') or '' }}</textarea></label></div>
+    <div class="form-row upload">
+      <label>Изображение {{ '' if work else '*' }}<input type="file" name="image" accept=".png,.jpg,.jpeg,.webp,.gif" data-preview="#imgPreview"></label>
+      <small class="muted">PNG, JPG, WEBP или GIF, до 5 МБ. {% if work %}Оставьте пустым, чтобы сохранить текущее.{% endif %}</small>
+      <img id="imgPreview" class="upload__preview" src="{{ url_for('static', filename='uploads/' ~ work.image) if work and work.image else '' }}" alt="" {{ 'hidden' if not (work and work.image) }}>
+    </div>
+    <label class="check"><input type="checkbox" name="is_published" {{ 'checked' if form.get('is_published') in (1, '1', 'on') }}> Опубликовать на сайте</label>
+    <div class="btn-row">
+      <button class="btn btn--primary" type="submit">Сохранить</button>
+      <a class="btn btn--ghost" href="{{ url_for('admin.portfolio') }}">Отмена</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Регистрация — WebCraft{% endblock %}
+{% block content %}
+<section class="auth">
+  <form method="post" class="card auth__card form" novalidate>
+    {{ m.csrf() }}
+    <h1>Регистрация</h1>
+    <p class="muted">Создайте личный кабинет клиента, чтобы оформлять и отслеживать заказы.</p>
+    <div class="form-row"><label>Имя и фамилия *<input type="text" name="name" value="{{ form.get('name', '') }}" required maxlength="100" autocomplete="name"></label></div>
+    <div class="form-row"><label>E-mail *<input type="email" name="email" value="{{ form.get('email', '') }}" required maxlength="120" autocomplete="email"></label></div>
+    <div class="form-row"><label>Телефон<input type="tel" name="phone" value="{{ form.get('phone', '') }}" maxlength="30" placeholder="+7 (___) ___-__-__" autocomplete="tel"></label></div>
+    <div class="form-row form-row--2">
+      <label>Пароль *<input type="password" name="password" required minlength="6" autocomplete="new-password"></label>
+      <label>Повторите пароль *<input type="password" name="password2" required minlength="6" autocomplete="new-password"></label>
+    </div>
+    <label class="check"><input type="checkbox" name="agree" {{ 'checked' if form.get('agree') }}> Я согласен(на) на обработку персональных данных</label>
+    <button class="btn btn--primary btn--block" type="submit">Зарегистрироваться</button>
+    <p class="center muted">Уже есть аккаунт? <a href="{{ url_for('auth.login') }}">Войти</a></p>
+  </form>
+</section>
+{% endblock %}

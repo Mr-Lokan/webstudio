@@ -1,0 +1,34 @@
+{% extends 'admin/base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Заказы{% endblock %}
+{% block heading %}{{ 'Заказы' if is_admin else 'Мои заказы' }}{% endblock %}
+{% block content %}
+<form class="filters panel" method="get">
+  <input type="search" name="q" value="{{ filters.q }}" placeholder="Поиск: №, проект, клиент, e-mail">
+  <select name="status">
+    <option value="">Все статусы</option>
+    <option value="active" {{ 'selected' if filters.status == 'active' }}>Все активные</option>
+    {% for key, label in ORDER_STATUSES.items() %}
+      <option value="{{ key }}" {{ 'selected' if filters.status == key }}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  {% if is_admin %}
+    <select name="designer">
+      <option value="">Все исполнители</option>
+      <option value="none" {{ 'selected' if filters.designer == 'none' }}>Не назначен</option>
+      {% for d in designers %}
+        <option value="{{ d.id }}" {{ 'selected' if filters.designer == d.id|string }}>{{ d.name }}</option>
+      {% endfor %}
+    </select>
+  {% endif %}
+  <button class="btn btn--primary" type="submit">Найти</button>
+  {% if filters.q or filters.status or filters.designer %}<a class="btn btn--ghost" href="{{ url_for('admin.orders') }}">Сбросить</a>{% endif %}
+  {% if is_admin %}<a class="btn btn--ghost filters__right" href="{{ url_for('admin.orders_export') }}">⤓ Экспорт в Excel (CSV)</a>{% endif %}
+</form>
+
+<section class="panel">
+  <div class="panel__head"><h2>Найдено: {{ pager.total }}</h2></div>
+  {% include 'admin/_orders_table.html' with context %}
+  {{ m.pager(pager) }}
+</section>
+{% endblock %}

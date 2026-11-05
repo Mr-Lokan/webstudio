@@ -1,0 +1,31 @@
+{% extends 'admin/base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}{{ 'Редактирование пользователя' if user else 'Новый пользователь' }}{% endblock %}
+{% block heading %}<a href="{{ url_for('admin.users') }}" class="muted">Пользователи</a> / {{ user.name if user else 'Новый пользователь' }}{% endblock %}
+{% block content %}
+<section class="panel panel--form">
+  <form method="post" class="form" autocomplete="off">
+    {{ m.csrf() }}
+    <div class="form-row form-row--2">
+      <label>Имя *<input type="text" name="name" value="{{ form.get('name', '') }}" required maxlength="100"></label>
+      <label>E-mail *<input type="email" name="email" value="{{ form.get('email', '') }}" required maxlength="120"></label>
+    </div>
+    <div class="form-row form-row--2">
+      <label>Телефон<input type="tel" name="phone" value="{{ form.get('phone') or '' }}" maxlength="30"></label>
+      <label>Роль *
+        <select name="role">
+          {% for key, label in ROLES.items() %}<option value="{{ key }}" {{ 'selected' if form.get('role') == key }}>{{ label }}</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+    <div class="form-row"><label>Должность <small class="muted">(для сотрудников — отображается на странице «О студии»)</small><input type="text" name="position" value="{{ form.get('position') or '' }}" maxlength="100"></label></div>
+    <div class="form-row"><label>О сотруднике<textarea name="bio" rows="3" maxlength="500">{{ form.get('bio') or '' }}</textarea></label></div>
+    <div class="form-row"><label>{{ 'Новый пароль (оставьте пустым, чтобы не менять)' if user else 'Пароль *' }}<input type="password" name="password" minlength="6" autocomplete="new-password" {{ '' if user else 'required' }}></label></div>
+    <label class="check"><input type="checkbox" name="is_active" {{ 'checked' if form.get('is_active') in (1, '1', 'on') }}> Учётная запись активна</label>
+    <div class="btn-row">
+      <button class="btn btn--primary" type="submit">Сохранить</button>
+      <a class="btn btn--ghost" href="{{ url_for('admin.users') }}">Отмена</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

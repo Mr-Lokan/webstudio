@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Портфолио — WebCraft{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <h1>Портфолио</h1>
+    <p class="muted">Проекты, которыми мы гордимся. Каждый из них решает конкретную задачу бизнеса.</p>
+    <div class="chips">
+      <a class="chip {{ 'is-active' if not current }}" href="{{ url_for('main.portfolio') }}">Все работы</a>
+      {% for c in categories %}
+        <a class="chip {{ 'is-active' if current == c.slug }}" href="{{ url_for('main.portfolio', category=c.slug) }}">{{ c.name }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<section class="section section--tight">
+  <div class="container">
+    <div class="grid grid--3">
+      {% for w in works %}{{ m.work_card(w) }}{% else %}<p class="muted">Работ в этой категории пока нет.</p>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

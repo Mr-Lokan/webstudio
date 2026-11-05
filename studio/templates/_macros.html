@@ -1,0 +1,102 @@
+{% macro status_badge(status) -%}
+  <span class="badge badge--{{ status }}">{{ ORDER_STATUSES.get(status, status) }}</span>
+{%- endmacro %}
+
+{% macro payment_badge(order) -%}
+  {% if not order.price %}<span class="badge badge--muted">Счёт не выставлен</span>
+  {% elif order.paid >= order.price %}<span class="badge badge--done">Оплачен</span>
+  {% elif order.paid > 0 %}<span class="badge badge--review">Оплачен частично</span>
+  {% else %}<span class="badge badge--new">Не оплачен</span>{% endif %}
+{%- endmacro %}
+
+{% macro avatar(name, size='') -%}
+  <span class="avatar {{ size }}" style="--hue: {{ avatar_hue(name) }}">{{ initials(name) }}</span>
+{%- endmacro %}
+
+{% macro stars(rating) -%}
+  <span class="stars" aria-label="Оценка {{ rating }} из 5">{% for i in range(1, 6) %}<span class="{{ 'on' if i <= rating }}">★</span>{% endfor %}</span>
+{%- endmacro %}
+
+{% macro csrf() -%}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+{%- endmacro %}
+
+{% macro pager(p) -%}
+  {% if p.pages > 1 %}
+    <nav class="pager">
+      {% if p.has_prev %}<a href="{{ page_url(p.page - 1) }}" aria-label="Назад">‹</a>{% endif %}
+      {% for num in p.iter_pages() %}
+        {% if num %}<a href="{{ page_url(num) }}" class="{{ 'is-active' if num == p.page }}">{{ num }}</a>
+        {% else %}<span>…</span>{% endif %}
+      {% endfor %}
+      {% if p.has_next %}<a href="{{ page_url(p.page + 1) }}" aria-label="Вперёд">›</a>{% endif %}
+    </nav>
+  {% endif %}
+{%- endmacro %}
+
+{% macro timeline(history) -%}
+  <ol class="timeline">
+    {% for h in history %}
+      <li class="timeline__item">
+        <span class="timeline__dot badge--{{ h.new_status }}"></span>
+        <div>
+          <strong>{{ ORDER_STATUSES.get(h.new_status, h.new_status) }}</strong>
+          <div class="muted small">{{ h.created_at|date(true) }}{% if h.author %} · {{ h.author }}{% endif %}</div>
+        </div>
+      </li>
+    {% else %}
+      <li class="muted">История пуста</li>
+    {% endfor %}
+  </ol>
+{%- endmacro %}
+
+{% macro comments_block(comments, action, can_write=true, placeholder='Напишите сообщение…') -%}
+  <div class="chat" id="comments">
+    {% for c in comments %}
+      {% set mine = g.user and c.user_id == g.user.id %}
+      <div class="chat__msg {{ 'chat__msg--mine' if mine }}">
+        {{ avatar(c.author or 'Удалён', 'avatar--sm') }}
+        <div class="chat__bubble">
+          <div class="chat__meta">
+            <strong>{{ c.author or 'Пользователь удалён' }}</strong>
+            {% if c.author_role and c.author_role != 'client' %}<span class="tag">{{ ROLES[c.author_role] }}</span>{% endif %}
+            <span class="muted">{{ c.created_at|date(true) }}</span>
+          </div>
+          <div class="chat__text">{{ c.text|nl2br }}</div>
+        </div>
+      </div>
+    {% else %}
+      <p class="muted">Сообщений пока нет. Здесь будет переписка по заказу.</p>
+    {% endfor %}
+  </div>
+  {% if can_write %}
+    <form method="post" action="{{ action }}" class="chat__form">
+      {{ csrf() }}
+      <textarea name="text" rows="2" placeholder="{{ placeholder }}" required maxlength="3000"></textarea>
+      <button class="btn btn--primary" type="submit">Отправить</button>
+    </form>
+  {% endif %}
+{%- endmacro %}
+
+{% macro service_card(s) -%}
+  <a class="card service-card" href="{{ url_for('main.service_detail', service_id=s.id) }}">
+    <span class="tag">{{ s.category }}</span>
+    <h3>{{ s.title }}</h3>
+    <p class="muted">{{ s.short_description }}</p>
+    <div class="service-card__footer">
+      <span class="price">от {{ s.price_from|money }}</span>
+      <span class="muted small">от {{ s.duration_days }} {{ plural(s.duration_days, 'дня', 'дней', 'дней') }}</span>
+    </div>
+  </a>
+{%- endmacro %}
+
+{% macro work_card(w) -%}
+  <a class="work-card" href="{{ url_for('main.portfolio_item', work_id=w.id) }}">
+    <div class="work-card__image"><img src="{{ url_for('static', filename='uploads/' ~ w.image) }}" alt="{{ w.title }}" loading="lazy"></div>
+    <div class="work-card__body">
+      <span class="tag">{{ w.category or 'Без категории' }}</span>
+      <h3>{{ w.title }}</h3>
+      <p class="muted small">{{ w.client }}{% if w.year %} · {{ w.year }}{% endif %}</p>
+    </div>
+  </a>
+{%- endmacro %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} — WebCraft{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container error-page">
+    <div class="error-page__code">{{ code }}</div>
+    <h1>{{ title }}</h1>
+    <p class="muted">{{ text }}</p>
+    <div class="btn-row center">
+      <a class="btn btn--primary" href="{{ url_for('main.index') }}">На главную</a>
+      <a class="btn btn--ghost" href="javascript:history.back()">Назад</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

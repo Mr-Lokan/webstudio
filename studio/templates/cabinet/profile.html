@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Профиль — WebCraft{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <nav class="breadcrumbs">
+      {% if g.user.role == 'client' %}<a href="{{ url_for('cabinet.index') }}">Личный кабинет</a>{% else %}<a href="{{ url_for('admin.index') }}">Панель управления</a>{% endif %} / Профиль
+    </nav>
+    <h1>Настройки профиля</h1>
+  </div>
+</section>
+<section class="section section--tight">
+  <div class="container grid grid--2">
+    <form method="post" class="card form">
+      {{ m.csrf() }}<input type="hidden" name="action" value="profile">
+      <h2>Личные данные</h2>
+      <div class="form-row"><label>Имя<input type="text" name="name" value="{{ g.user.name }}" required maxlength="100"></label></div>
+      <div class="form-row"><label>E-mail<input type="email" name="email" value="{{ g.user.email }}" required maxlength="120"></label></div>
+      <div class="form-row"><label>Телефон<input type="tel" name="phone" value="{{ g.user.phone or '' }}" maxlength="30"></label></div>
+      <div class="muted small">Роль: {{ ROLES[g.user.role] }} · зарегистрирован {{ g.user.created_at|date }} · заказов: {{ stats.total }}</div>
+      <button class="btn btn--primary" type="submit">Сохранить</button>
+    </form>
+    <form method="post" class="card form">
+      {{ m.csrf() }}<input type="hidden" name="action" value="password">
+      <h2>Смена пароля</h2>
+      <div class="form-row"><label>Текущий пароль<input type="password" name="current_password" required autocomplete="current-password"></label></div>
+      <div class="form-row"><label>Новый пароль<input type="password" name="new_password" required minlength="6" autocomplete="new-password"></label></div>
+      <div class="form-row"><label>Повторите новый пароль<input type="password" name="new_password2" required minlength="6" autocomplete="new-password"></label></div>
+      <button class="btn btn--primary" type="submit">Изменить пароль</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

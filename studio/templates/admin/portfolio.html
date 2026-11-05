@@ -1,0 +1,30 @@
+{% extends 'admin/base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Портфолио{% endblock %}
+{% block heading %}Портфолио{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel__head">
+    <h2>Работы ({{ works|length }})</h2>
+    <a class="btn btn--primary btn--sm" href="{{ url_for('admin.portfolio_form') }}">+ Добавить работу</a>
+  </div>
+  <div class="admin-works">
+    {% for w in works %}
+      <div class="admin-work {{ 'is-hidden' if not w.is_published }}">
+        <img src="{{ url_for('static', filename='uploads/' ~ w.image) }}" alt="{{ w.title }}" loading="lazy">
+        <div class="admin-work__body">
+          <strong>{{ w.title }}</strong>
+          <span class="muted small">{{ w.category or 'Без категории' }} · {{ w.year or '—' }}</span>
+          {% if not w.is_published %}<span class="badge badge--muted">Скрыта</span>{% endif %}
+        </div>
+        <div class="admin-work__actions">
+          <a class="btn btn--sm btn--ghost" href="{{ url_for('admin.portfolio_form', work_id=w.id) }}">Изменить</a>
+          <form method="post" action="{{ url_for('admin.portfolio_delete', work_id=w.id) }}" class="inline" data-confirm="Удалить работу «{{ w.title }}»?">
+            {{ m.csrf() }}<button class="btn btn--sm btn--danger-ghost" type="submit">Удалить</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

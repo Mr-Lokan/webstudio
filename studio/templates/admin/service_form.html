@@ -1,0 +1,32 @@
+{% extends 'admin/base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}{{ 'Редактирование услуги' if service else 'Новая услуга' }}{% endblock %}
+{% block heading %}<a href="{{ url_for('admin.services') }}" class="muted">Услуги</a> / {{ service.title if service else 'Новая услуга' }}{% endblock %}
+{% block content %}
+<section class="panel panel--form">
+  <form method="post" class="form">
+    {{ m.csrf() }}
+    <div class="form-row form-row--2">
+      <label>Название *<input type="text" name="title" value="{{ form.get('title', '') }}" required maxlength="150"></label>
+      <label>Категория *
+        <select name="category_id" required>
+          <option value="">— выберите —</option>
+          {% for c in categories %}<option value="{{ c.id }}" {{ 'selected' if form.get('category_id')|string == c.id|string }}>{{ c.name }}</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+    <div class="form-row"><label>Краткое описание<input type="text" name="short_description" value="{{ form.get('short_description') or '' }}" maxlength="200"></label></div>
+    <div class="form-row"><label>Подробное описание<textarea name="description" rows="8">{{ form.get('description') or '' }}</textarea></label>
+      <small class="muted">Пустая строка разделяет абзацы.</small></div>
+    <div class="form-row form-row--2">
+      <label>Цена от, ₽ *<input type="number" name="price_from" min="0" step="500" value="{{ form.get('price_from', '') }}" required></label>
+      <label>Срок выполнения, дней *<input type="number" name="duration_days" min="1" value="{{ form.get('duration_days', '') }}" required></label>
+    </div>
+    <label class="check"><input type="checkbox" name="is_active" {{ 'checked' if form.get('is_active') in (1, '1', 'on') }}> Показывать на сайте</label>
+    <div class="btn-row">
+      <button class="btn btn--primary" type="submit">Сохранить</button>
+      <a class="btn btn--ghost" href="{{ url_for('admin.services') }}">Отмена</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

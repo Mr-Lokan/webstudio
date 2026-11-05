@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Заказ №{{ order.id }} — WebCraft{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <nav class="breadcrumbs"><a href="{{ url_for('cabinet.index') }}">Личный кабинет</a> / Заказ №{{ order.id }}</nav>
+    <div class="title-row">
+      <h1>{{ order.title }}</h1>
+      {{ m.status_badge(order.status) }}
+    </div>
+    <div class="muted">Заказ №{{ order.id }} от {{ order.created_at|date(true) }}{% if order.service_title %} · {{ order.service_title }}{% endif %}</div>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="container layout-aside">
+    <div class="stack">
+      {% if order.status == 'review' %}
+        <div class="card callout">
+          <h3>Работа готова и ожидает вашей проверки</h3>
+          <p class="muted">Ознакомьтесь с результатом (ссылка в переписке) и примите работу либо отправьте её на доработку.</p>
+          <div class="callout__actions">
+            <form method="post" action="{{ url_for('cabinet.order_decision', order_id=order.id) }}">
+              {{ m.csrf() }}<input type="hidden" name="action" value="accept">
+              <button class="btn btn--success" type="submit">Принять работу</button>
+            </form>
+            <form method="post" action="{{ url_for('cabinet.order_decision', order_id=order.id) }}" class="callout__revise">
+              {{ m.csrf() }}<input type="hidden" name="action" value="revise">
+              <input type="text" name="remarks" placeholder="Что нужно исправить?" required>
+              <button class="btn btn--ghost" type="submit">На доработку</button>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="card">
+        <h2>Описание задачи</h2>
+        <div class="prose">{{ order.description|nl2br }}</div>
+      </div>
+
+      <div class="card">
+        <h2>Переписка по заказу</h2>
+        {{ m.comments_block(comments, url_for('cabinet.order_comment', order_id=order.id), order.status != 'cancelled') }}
+      </div>
+
+      {% if order.status == 'done' %}
+        <div class="card">
+          <h2>Отзыв о работе</h2>
+          {% if review %}
+            {{ m.stars(review.rating) }}
+            <p>{{ review.text }}</p>
+            <span class="badge {{ 'badge--done' if review.is_approved else 'badge--muted' }}">{{ 'Опубликован на сайте' if review.is_approved else 'На модерации' }}</span>
+          {% else %}
+            <form method="post" action="{{ url_for('cabinet.order_review', order_id=order.id) }}" class="form">
+              {{ m.csrf() }}
+              <div class="rating-input">
+                {% for i in range(5, 0, -1) %}
+                  <input type="radio" id="r{{ i }}" name="rating" value="{{ i }}" {{ 'checked' if i == 5 }}><label for="r{{ i }}" title="{{ i }}">★</label>
+                {% endfor %}
+              </div>
+              <div class="form-row"><textarea name="text" rows="3" required minlength="10" maxlength="2000" placeholder="Расскажите, как прошла работа над проектом"></textarea></div>
+              <button class="btn btn--primary" type="submit">Оставить отзыв</button>
+            </form>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    <aside class="stack">
+      <div class="card facts">
+        <dl>
+          <dt>Исполнитель</dt><dd>{{ order.designer_name or 'будет назначен' }}</dd>
+          <dt>Ваш бюджет</dt><dd>{{ order.budget|money }}</dd>
+          <dt>Стоимость</dt><dd><strong>{{ order.price|money if order.price else 'согласуется' }}</strong></dd>
+          <dt>Оплачено</dt><dd>{{ order.paid|money }} {{ m.payment_badge(order) }}</dd>
+          <dt>Срок сдачи</dt><dd class="{{ 'text-danger' if is_overdue(order) }}">{{ order.deadline|date }}</dd>
+        </dl>
+        {% if order.price and order.price > order.paid %}
+          <div class="note note--sm">Для оплаты остатка <strong>{{ (order.price - order.paid)|money }}</strong> свяжитесь с менеджером: счёт будет выставлен на вашу почту.</div>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h3>История заказа</h3>
+        {{ m.timeline(history) }}
+      </div>
+
+      {% if payments %}
+        <div class="card">
+          <h3>Платежи</h3>
+          <ul class="list">
+            {% for p in payments %}
+              <li><span>{{ p.created_at|date }}<br><span class="muted small">{{ PAYMENT_METHODS[p.method] }}</span></span><strong>{{ p.amount|money }}</strong></li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      {% if order.status in ('new', 'discussion') %}
+        <form method="post" action="{{ url_for('cabinet.order_cancel', order_id=order.id) }}" data-confirm="Отменить заказ №{{ order.id }}?">
+          {{ m.csrf() }}
+          <button class="btn btn--danger-ghost btn--block" type="submit">Отменить заказ</button>
+        </form>
+      {% endif %}
+    </aside>
+  </div>
+</section>
+{% endblock %}

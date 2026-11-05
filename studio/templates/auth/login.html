@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Вход — WebCraft{% endblock %}
+{% block content %}
+<section class="auth">
+  <form method="post" class="card auth__card form">
+    {{ m.csrf() }}
+    <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
+    <h1>Вход в систему</h1>
+    <p class="muted">Войдите, чтобы оформлять заказы и следить за их выполнением.</p>
+    <div class="form-row"><label>E-mail<input type="email" name="email" value="{{ email }}" required autofocus autocomplete="username"></label></div>
+    <div class="form-row"><label>Пароль<input type="password" name="password" required autocomplete="current-password"></label></div>
+    <label class="check"><input type="checkbox" name="remember"> Запомнить меня</label>
+    <button class="btn btn--primary btn--block" type="submit">Войти</button>
+    <p class="center muted">Нет аккаунта? <a href="{{ url_for('auth.register') }}">Зарегистрируйтесь</a></p>
+    <details class="demo">
+      <summary>Демонстрационные учётные записи</summary>
+      <table>
+        <tr><td>Администратор</td><td>admin@webcraft.ru</td><td>admin123</td></tr>
+        <tr><td>Дизайнер</td><td>anna@webcraft.ru</td><td>designer123</td></tr>
+        <tr><td>Клиент</td><td>client@mail.ru</td><td>client123</td></tr>
+      </table>
+    </details>
+  </form>
+</section>
+{% endblock %}

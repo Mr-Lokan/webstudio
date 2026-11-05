@@ -1,0 +1,35 @@
+{% extends 'admin/base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Услуги{% endblock %}
+{% block heading %}Услуги{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel__head">
+    <h2>Каталог услуг ({{ services|length }})</h2>
+    <a class="btn btn--primary btn--sm" href="{{ url_for('admin.service_form') }}">+ Добавить услугу</a>
+  </div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Услуга</th><th>Категория</th><th class="num">Цена от</th><th class="num">Срок, дн.</th><th class="num">Заказов</th><th>Статус</th><th></th></tr></thead>
+      <tbody>
+      {% for s in services %}
+        <tr>
+          <td><strong>{{ s.title }}</strong><div class="muted small">{{ s.short_description }}</div></td>
+          <td>{{ s.category }}</td>
+          <td class="num">{{ s.price_from|money }}</td>
+          <td class="num">{{ s.duration_days }}</td>
+          <td class="num">{{ s.orders_count }}</td>
+          <td>{% if s.is_active %}<span class="badge badge--done">Активна</span>{% else %}<span class="badge badge--muted">Скрыта</span>{% endif %}</td>
+          <td class="actions">
+            <a class="btn btn--sm btn--ghost" href="{{ url_for('admin.service_form', service_id=s.id) }}">Изменить</a>
+            <form method="post" action="{{ url_for('admin.service_delete', service_id=s.id) }}" class="inline" data-confirm="Удалить услугу «{{ s.title }}»?{% if s.orders_count %} В {{ s.orders_count }} заказах ссылка на услугу будет очищена.{% endif %}">
+              {{ m.csrf() }}<button class="btn btn--sm btn--danger-ghost" type="submit">Удалить</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

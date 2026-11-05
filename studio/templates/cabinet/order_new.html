@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Новый заказ — WebCraft{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <nav class="breadcrumbs"><a href="{{ url_for('cabinet.index') }}">Личный кабинет</a> / Новый заказ</nav>
+    <h1>Оформление заказа</h1>
+    <p class="muted">Опишите задачу — менеджер свяжется с вами, уточнит детали и зафиксирует стоимость и сроки.</p>
+  </div>
+</section>
+<section class="section section--tight">
+  <div class="container layout-aside layout-aside--wide">
+    <form method="post" class="card form" novalidate>
+      {{ m.csrf() }}
+      <div class="form-row">
+        <label>Услуга
+          <select name="service_id" id="serviceSelect">
+            <option value="">— не знаю, нужна консультация —</option>
+            {% for s in services %}
+              <option value="{{ s.id }}" data-price="{{ s.price_from }}" data-days="{{ s.duration_days }}" {{ 'selected' if form.get('service_id')|string == s.id|string }}>{{ s.title }} (от {{ s.price_from|money }})</option>
+            {% endfor %}
+          </select>
+        </label>
+      </div>
+      <div class="form-row"><label>Название проекта *<input type="text" name="title" value="{{ form.get('title', '') }}" required maxlength="150" placeholder="Например: сайт для кофейни"></label></div>
+      <div class="form-row">
+        <label>Описание задачи *
+          <textarea name="description" rows="7" required maxlength="5000" placeholder="Чем занимается компания, какие цели у проекта, что должно быть на сайте, примеры сайтов, которые нравятся…">{{ form.get('description', '') }}</textarea>
+        </label>
+      </div>
+      <div class="form-row form-row--2">
+        <label>Бюджет, ₽<input type="number" name="budget" min="0" step="1000" value="{{ form.get('budget', '') }}" placeholder="Например: 50000"></label>
+        <label>Желаемый срок сдачи<input type="date" name="deadline" min="{{ today }}" value="{{ form.get('deadline', '') }}"></label>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn--primary" type="submit">Отправить заказ</button>
+        <a class="btn btn--ghost" href="{{ url_for('cabinet.index') }}">Отмена</a>
+      </div>
+    </form>
+    <aside class="card hint">
+      <h3>Что будет дальше?</h3>
+      <ol class="hint__steps">
+        <li>Заказ получит статус <strong>«Новый»</strong> и появится в панели менеджера.</li>
+        <li>Менеджер свяжется с вами для <strong>согласования ТЗ</strong>, назначит дизайнера и стоимость.</li>
+        <li>После предоплаты 50 % заказ переходит <strong>в работу</strong>.</li>
+        <li>Готовый результат вы <strong>проверяете</strong> и принимаете прямо в кабинете.</li>
+      </ol>
+      <div class="hint__estimate" id="serviceEstimate" hidden>
+        <div class="muted small">Ориентир по выбранной услуге</div>
+        <strong id="estimatePrice"></strong>
+        <span class="muted small" id="estimateDays"></span>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

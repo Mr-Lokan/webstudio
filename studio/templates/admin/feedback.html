@@ -1,0 +1,33 @@
+{% extends 'admin/base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Обращения{% endblock %}
+{% block heading %}Обращения с сайта{% endblock %}
+{% block content %}
+<div class="tabs">
+  <a href="{{ url_for('admin.feedback', show='new') }}" class="{{ 'is-active' if show == 'new' }}">Новые</a>
+  <a href="{{ url_for('admin.feedback', show='all') }}" class="{{ 'is-active' if show != 'new' }}">Все</a>
+</div>
+<div class="stack">
+  {% for f in items %}
+    <section class="panel feedback {{ 'is-done' if f.is_processed }}">
+      <div class="feedback__head">
+        <div class="user-cell">{{ m.avatar(f.name, 'avatar--sm') }}<span><strong>{{ f.name }}</strong>
+          <small class="muted">{{ f.email or '' }}{% if f.email and f.phone %} · {% endif %}{{ f.phone or '' }}</small></span></div>
+        <span class="muted small">{{ f.created_at|date(true) }}</span>
+      </div>
+      <p>{{ f.message }}</p>
+      <div class="btn-row">
+        <form method="post" action="{{ url_for('admin.feedback_toggle', item_id=f.id) }}" class="inline">
+          {{ m.csrf() }}<button class="btn btn--sm {{ 'btn--ghost' if f.is_processed else 'btn--success' }}" type="submit">{{ 'Вернуть в новые' if f.is_processed else '✓ Обработано' }}</button>
+        </form>
+        {% if f.email %}<a class="btn btn--sm btn--ghost" href="mailto:{{ f.email }}">Ответить на e-mail</a>{% endif %}
+        <form method="post" action="{{ url_for('admin.feedback_delete', item_id=f.id) }}" class="inline" data-confirm="Удалить обращение?">
+          {{ m.csrf() }}<button class="btn btn--sm btn--danger-ghost" type="submit">Удалить</button>
+        </form>
+      </div>
+    </section>
+  {% else %}
+    <section class="panel empty"><p class="muted">{{ 'Новых обращений нет 🎉' if show == 'new' else 'Обращений пока нет.' }}</p></section>
+  {% endfor %}
+</div>
+{% endblock %}

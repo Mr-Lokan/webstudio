@@ -1,0 +1,27 @@
+{% import '_macros.html' as m with context %}
+{% set rows = orders if orders is defined else latest %}
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr><th>№</th><th>Проект / клиент</th><th>Исполнитель</th><th>Статус</th><th class="num">Стоимость</th><th>Оплата</th><th>Срок</th></tr>
+    </thead>
+    <tbody>
+    {% for o in rows %}
+      <tr class="clickable" data-href="{{ url_for('admin.order', order_id=o.id) }}">
+        <td class="muted">{{ o.id }}</td>
+        <td>
+          <a href="{{ url_for('admin.order', order_id=o.id) }}"><strong>{{ o.title }}</strong></a>
+          <div class="muted small">{{ o.client_name }} · {{ o.created_at|date }}</div>
+        </td>
+        <td>{{ o.designer_name or '—' }}</td>
+        <td>{{ m.status_badge(o.status) }}</td>
+        <td class="num">{{ o.price|money }}</td>
+        <td>{{ m.payment_badge(o) }}</td>
+        <td class="{{ 'text-danger' if is_overdue(o) }}">{{ o.deadline|date }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="7" class="muted center">Заказы не найдены</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>

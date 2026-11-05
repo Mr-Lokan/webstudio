@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Контакты — WebCraft{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <h1>Контакты</h1>
+    <p class="muted">Ответим на вопросы о проекте, стоимости и сроках. Обычно отвечаем в течение рабочего дня.</p>
+  </div>
+</section>
+<section class="section section--tight">
+  <div class="container layout-aside layout-aside--wide">
+    <form method="post" class="card form" novalidate>
+      {{ m.csrf() }}
+      <h2>Напишите нам</h2>
+      <div class="form-row">
+        <label>Ваше имя *<input type="text" name="name" value="{{ form.get('name', '') }}" required maxlength="100"></label>
+      </div>
+      <div class="form-row form-row--2">
+        <label>E-mail<input type="email" name="email" value="{{ form.get('email', '') }}" maxlength="120"></label>
+        <label>Телефон<input type="tel" name="phone" value="{{ form.get('phone', '') }}" maxlength="30" placeholder="+7 (___) ___-__-__"></label>
+      </div>
+      <div class="form-row">
+        <label>Сообщение *<textarea name="message" rows="6" required maxlength="3000" placeholder="Расскажите о вашем проекте">{{ form.get('message', '') }}</textarea></label>
+      </div>
+      <button class="btn btn--primary" type="submit">Отправить сообщение</button>
+      <p class="muted small">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>
+    </form>
+    <aside class="contact-list">
+      <div class="card"><div class="muted small">Телефон</div><strong>+7 (900) 100-00-00</strong></div>
+      <div class="card"><div class="muted small">E-mail</div><strong>hello@webcraft.ru</strong></div>
+      <div class="card"><div class="muted small">Адрес</div><strong>г. Москва, ул. Дизайнеров, д. 15, офис 304</strong></div>
+      <div class="card"><div class="muted small">Режим работы</div><strong>Пн–Пт: 10:00–19:00</strong></div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

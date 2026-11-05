@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ru" data-site-root="/webstudio">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Полная версия сайта - WebCraft</title>
+  <meta name="description" content="WebCraft — студия веб-дизайна: разработка сайтов, интернет-магазинов, UI/UX дизайн и брендинг.">
+  <link rel="icon" href="/webstudio/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/webstudio/static/css/style.css">
+  
+</head>
+<body class="">
+
+<header class="header">
+  <div class="container header__inner">
+    <a class="logo" href="/webstudio/"><span class="logo__mark">W</span>WebCraft</a>
+    <button class="burger" type="button" aria-label="Меню" data-toggle-nav><span></span><span></span><span></span></button>
+    <nav class="nav" id="nav">
+      <a href="/webstudio/services/" class="">Услуги</a>
+      <a href="/webstudio/portfolio/" class="">Портфолио</a>
+      <a href="/webstudio/calculator/" class="">Калькулятор</a>
+      <a href="/webstudio/about/" class="">О студии</a>
+      <a href="/webstudio/contacts/" class="">Контакты</a>
+      <div class="nav__user">
+        
+          <a class="btn btn--sm btn--ghost" href="/webstudio/login/">Войти</a>
+          <a class="btn btn--sm btn--primary" href="/webstudio/register/">Регистрация</a>
+        
+      </div>
+    </nav>
+  </div>
+</header>
+
+
+  
+
+
+<main>
+  
+<section class="page-head">
+  <div class="container">
+    <h1>Полная версия работает при локальном запуске</h1>
+    <p class="lead">На GitHub Pages размещена статическая копия публичной части сайта: услуги, портфолио,
+      калькулятор и информация о студии. Регистрация, вход, личный кабинет клиента, оформление заказов,
+      обратная связь и панель управления (CRM) требуют сервера с Python и базой данных SQLite.</p>
+  </div>
+</section>
+<section class="section section--tight">
+  <div class="container grid grid--2">
+    <div class="card">
+      <h2>Как запустить</h2>
+      <ol class="local-steps">
+        <li>Скачайте исходный код: <a href="https://github.com/Mr-Lokan/webstudio">github.com/Mr-Lokan/webstudio</a> → Code → Download ZIP.</li>
+        <li>Установите Python 3.10 или новее.</li>
+        <li>В папке проекта выполните <code>pip install -r requirements.txt</code>.</li>
+        <li>Запустите <code>python run.py</code> (или <code>start.bat</code> в Windows).</li>
+        <li>Откройте <code>http://127.0.0.1:5000</code>.</li>
+      </ol>
+      <p class="muted small">База данных с демонстрационными данными создаётся автоматически при первом запуске.</p>
+    </div>
+    <div class="card">
+      <h2>Демонстрационные учётные записи</h2>
+      <table class="local-table">
+        <tr><th>Роль</th><th>E-mail</th><th>Пароль</th></tr>
+        <tr><td>Администратор</td><td><code>admin@webcraft.ru</code></td><td><code>admin123</code></td></tr>
+        <tr><td>Дизайнер</td><td><code>anna@webcraft.ru</code></td><td><code>designer123</code></td></tr>
+        <tr><td>Клиент</td><td><code>client@mail.ru</code></td><td><code>client123</code></td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="container">
+    <div class="btn-row" style="margin-top: 24px">
+      <a class="btn btn--primary" href="https://github.com/Mr-Lokan/webstudio">Исходный код на GitHub</a>
+      <a class="btn btn--ghost" href="/webstudio/">На главную</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="container footer__grid">
+    <div>
+      <a class="logo logo--light" href="/webstudio/"><span class="logo__mark">W</span>WebCraft</a>
+      <p class="footer__text">Студия веб-дизайна полного цикла: от идеи и прототипа до запуска и продвижения.</p>
+    </div>
+    <div>
+      <h4>Студия</h4>
+      <a href="/webstudio/about/">О нас</a>
+      <a href="/webstudio/portfolio/">Портфолио</a>
+      <a href="/webstudio/contacts/">Контакты</a>
+    </div>
+    <div>
+      <h4>Клиентам</h4>
+      <a href="/webstudio/services/">Услуги и цены</a>
+      <a href="/webstudio/calculator/">Калькулятор стоимости</a>
+      <a href="/webstudio/local/">Личный кабинет</a>
+    </div>
+    <div>
+      <h4>Контакты</h4>
+      <span>+7 (900) 100-00-00</span>
+      <span>hello@webcraft.ru</span>
+      <span>г. Москва, ул. Дизайнеров, 15</span>
+    </div>
+  </div>
+  <div class="container footer__bottom">© 2026 WebCraft. Курсовой проект «Автоматизация студии веб-дизайна».</div>
+</footer>
+
+<script src="/webstudio/static/js/main.js"></script>
+
+<script src="/webstudio/static/js/static-pages.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}{{ service.title }} — WebCraft{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <nav class="breadcrumbs"><a href="{{ url_for('main.services') }}">Услуги</a> / <a href="{{ url_for('main.services', category=service.category_slug) }}">{{ service.category }}</a></nav>
+    <h1>{{ service.title }}</h1>
+    <p class="lead">{{ service.short_description }}</p>
+  </div>
+</section>
+<section class="section section--tight">
+  <div class="container layout-aside">
+    <article class="card prose">
+      <h2>Что входит в услугу</h2>
+      {{ service.description|nl2br }}
+      <h3>Как проходит работа</h3>
+      <ol>
+        <li>Вы оформляете заказ в личном кабинете и описываете задачу.</li>
+        <li>Менеджер связывается с вами, уточняет детали и согласует техническое задание.</li>
+        <li>Назначенный дизайнер выполняет работу — статус заказа виден в кабинете онлайн.</li>
+        <li>Вы проверяете результат, принимаете его или отправляете на доработку.</li>
+      </ol>
+    </article>
+    <aside class="card order-box">
+      <div class="muted small">Стоимость</div>
+      <div class="order-box__price">от {{ service.price_from|money }}</div>
+      <div class="muted small">Срок выполнения</div>
+      <div class="order-box__term">от {{ service.duration_days }} {{ plural(service.duration_days, 'рабочего дня', 'рабочих дней', 'рабочих дней') }}</div>
+      <a class="btn btn--primary btn--block" href="{{ url_for('cabinet.order_new', service_id=service.id, title=service.title) }}">Заказать услугу</a>
+      <a class="btn btn--ghost btn--block" href="{{ url_for('main.calculator') }}">Рассчитать точнее</a>
+    </aside>
+  </div>
+</section>
+{% if works %}
+<section class="section section--tight">
+  <div class="container">
+    <h2>Примеры работ</h2>
+    <div class="grid grid--3">{% for w in works %}{{ m.work_card(w) }}{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+<section class="section section--tight">
+  <div class="container">
+    <h2>Другие услуги</h2>
+    <div class="grid grid--3">{% for s in others %}{{ m.service_card(s) }}{% endfor %}</div>
+  </div>
+</section>
+{% endblock %}

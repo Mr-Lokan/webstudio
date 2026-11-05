@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Личный кабинет — WebCraft{% endblock %}
+{% block content %}
+<section class="page-head page-head--cabinet">
+  <div class="container cabinet-head">
+    <div class="cabinet-head__user">
+      {{ m.avatar(g.user.name, 'avatar--lg') }}
+      <div>
+        <h1>{{ g.user.name }}</h1>
+        <div class="muted">{{ g.user.email }} · клиент с {{ g.user.created_at|date }}</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <a class="btn btn--ghost" href="{{ url_for('cabinet.profile') }}">Настройки профиля</a>
+      <a class="btn btn--primary" href="{{ url_for('cabinet.order_new') }}">+ Новый заказ</a>
+    </div>
+  </div>
+</section>
+<section class="section section--tight">
+  <div class="container">
+    <div class="stats">
+      <div class="stat"><span class="stat__label">Активные заказы</span><strong>{{ summary.active }}</strong></div>
+      <div class="stat"><span class="stat__label">Завершено</span><strong>{{ summary.done }}</strong></div>
+      <div class="stat"><span class="stat__label">Оплачено</span><strong>{{ summary.paid|money }}</strong></div>
+      <div class="stat {{ 'stat--warn' if summary.debt }}"><span class="stat__label">К оплате</span><strong>{{ summary.debt|money }}</strong></div>
+    </div>
+
+    <h2>Мои заказы</h2>
+    {% if orders %}
+      <div class="table-wrap card">
+        <table class="table">
+          <thead><tr><th>№</th><th>Проект</th><th>Услуга</th><th>Статус</th><th>Стоимость</th><th>Оплата</th><th>Срок</th></tr></thead>
+          <tbody>
+          {% for o in orders %}
+            <tr class="clickable" data-href="{{ url_for('cabinet.order', order_id=o.id) }}">
+              <td>{{ o.id }}</td>
+              <td><a href="{{ url_for('cabinet.order', order_id=o.id) }}"><strong>{{ o.title }}</strong></a><div class="muted small">от {{ o.created_at|date }}</div></td>
+              <td>{{ o.service_title or '—' }}</td>
+              <td>{{ m.status_badge(o.status) }}</td>
+              <td>{{ o.price|money if o.price else 'согласуется' }}</td>
+              <td>{{ m.payment_badge(o) }}</td>
+              <td class="{{ 'text-danger' if is_overdue(o) }}">{{ o.deadline|date }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="card empty">
+        <h3>У вас пока нет заказов</h3>
+        <p class="muted">Выберите услугу в каталоге или рассчитайте стоимость проекта в калькуляторе.</p>
+        <div class="btn-row center">
+          <a class="btn btn--primary" href="{{ url_for('cabinet.order_new') }}">Оформить первый заказ</a>
+          <a class="btn btn--ghost" href="{{ url_for('main.calculator') }}">Калькулятор</a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

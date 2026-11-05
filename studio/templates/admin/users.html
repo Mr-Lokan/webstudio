@@ -1,0 +1,48 @@
+{% extends 'admin/base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Пользователи{% endblock %}
+{% block heading %}Пользователи{% endblock %}
+{% block content %}
+<form class="filters panel" method="get">
+  <input type="search" name="q" value="{{ filters.q }}" placeholder="Поиск: имя, e-mail, телефон">
+  <select name="role">
+    <option value="">Все роли</option>
+    {% for key, label in ROLES.items() %}<option value="{{ key }}" {{ 'selected' if filters.role == key }}>{{ label }}</option>{% endfor %}
+  </select>
+  <button class="btn btn--primary" type="submit">Найти</button>
+  {% if filters.q or filters.role %}<a class="btn btn--ghost" href="{{ url_for('admin.users') }}">Сбросить</a>{% endif %}
+  <a class="btn btn--primary filters__right" href="{{ url_for('admin.user_form') }}">+ Новый пользователь</a>
+</form>
+
+<section class="panel">
+  <div class="panel__head"><h2>Найдено: {{ pager.total }}</h2></div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Пользователь</th><th>Телефон</th><th>Роль</th><th class="num">Заказов</th><th>Регистрация</th><th>Статус</th><th></th></tr></thead>
+      <tbody>
+      {% for u in users %}
+        <tr>
+          <td><span class="user-cell">{{ m.avatar(u.name, 'avatar--sm') }}<span><strong>{{ u.name }}</strong><small class="muted">{{ u.email }}</small></span></span></td>
+          <td>{{ u.phone or '—' }}</td>
+          <td><span class="tag tag--{{ u.role }}">{{ ROLES[u.role] }}</span>{% if u.position %}<div class="muted small">{{ u.position }}</div>{% endif %}</td>
+          <td class="num">{{ u.orders_count }}</td>
+          <td>{{ u.created_at|date }}</td>
+          <td>{% if u.is_active %}<span class="badge badge--done">Активен</span>{% else %}<span class="badge badge--cancelled">Заблокирован</span>{% endif %}</td>
+          <td class="actions">
+            <a class="btn btn--sm btn--ghost" href="{{ url_for('admin.user_form', user_id=u.id) }}">Изменить</a>
+            {% if u.id != g.user.id %}
+              <form method="post" action="{{ url_for('admin.user_delete', user_id=u.id) }}" class="inline" data-confirm="Удалить пользователя {{ u.name }}?">
+                {{ m.csrf() }}<button class="btn btn--sm btn--danger-ghost" type="submit">Удалить</button>
+              </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="7" class="muted center">Пользователи не найдены</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {{ m.pager(pager) }}
+</section>
+{% endblock %}

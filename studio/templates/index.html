@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block body_class %}page-home{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container hero__grid">
+    <div class="hero__text">
+      <span class="eyebrow">Студия веб-дизайна полного цикла</span>
+      <h1>Создаём сайты, которые <span class="gradient-text">работают на&nbsp;бизнес</span></h1>
+      <p class="hero__lead">Проектируем, рисуем и запускаем сайты, интернет-магазины и мобильные приложения.
+        Весь процесс — от заявки до оплаты — прозрачен и доступен в личном кабинете.</p>
+      <div class="btn-row">
+        <a class="btn btn--primary btn--lg" href="{{ url_for('main.calculator') }}">Рассчитать стоимость</a>
+        <a class="btn btn--light btn--lg" href="{{ url_for('main.portfolio') }}">Смотреть работы</a>
+      </div>
+      <div class="hero__stats">
+        <div><strong>{{ stats.projects }}+</strong><span>проектов</span></div>
+        <div><strong>{{ stats.clients }}</strong><span>{{ plural(stats.clients, 'клиент', 'клиента', 'клиентов') }}</span></div>
+        <div><strong>{{ stats.rating or '5.0' }}</strong><span>средняя оценка</span></div>
+      </div>
+    </div>
+    <div class="hero__visual" aria-hidden="true">
+      <div class="mock mock--main">
+        <div class="mock__bar"><i></i><i></i><i></i></div>
+        <div class="mock__hero"></div>
+        <div class="mock__lines"><i></i><i></i><i></i></div>
+        <div class="mock__cards"><i></i><i></i><i></i></div>
+      </div>
+      <div class="mock mock--float mock--a"><b>+38%</b><span>конверсия</span></div>
+      <div class="mock mock--float mock--b"><span class="dot"></span>Заказ №128 — в работе</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section__head">
+      <div>
+        <span class="eyebrow">Услуги</span>
+        <h2>Чем мы можем помочь</h2>
+      </div>
+      <a class="link-arrow" href="{{ url_for('main.services') }}">Все услуги →</a>
+    </div>
+    <div class="grid grid--3">
+      {% for s in services %}{{ m.service_card(s) }}{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="container">
+    <div class="section__head">
+      <div>
+        <span class="eyebrow">Как мы работаем</span>
+        <h2>Прозрачный процесс в 5 шагов</h2>
+      </div>
+    </div>
+    <ol class="steps">
+      <li><span>01</span><h3>Заявка</h3><p>Оставляете заказ в личном кабинете или через форму на сайте.</p></li>
+      <li><span>02</span><h3>Согласование ТЗ</h3><p>Менеджер уточняет задачу, фиксирует стоимость и сроки.</p></li>
+      <li><span>03</span><h3>Дизайн и разработка</h3><p>Назначенный дизайнер ведёт проект, вы видите статус онлайн.</p></li>
+      <li><span>04</span><h3>Проверка</h3><p>Принимаете работу или отправляете на доработку в один клик.</p></li>
+      <li><span>05</span><h3>Запуск</h3><p>Публикуем проект и остаёмся на связи для поддержки.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section__head">
+      <div>
+        <span class="eyebrow">Портфолио</span>
+        <h2>Последние проекты</h2>
+      </div>
+      <a class="link-arrow" href="{{ url_for('main.portfolio') }}">Все работы →</a>
+    </div>
+    <div class="grid grid--3">
+      {% for w in works %}{{ m.work_card(w) }}{% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if reviews %}
+<section class="section section--alt">
+  <div class="container">
+    <div class="section__head">
+      <div>
+        <span class="eyebrow">Отзывы</span>
+        <h2>Что говорят клиенты</h2>
+      </div>
+    </div>
+    <div class="grid grid--3">
+      {% for r in reviews %}
+        <figure class="card review">
+          {{ m.stars(r.rating) }}
+          <blockquote>{{ r.text }}</blockquote>
+          <figcaption>
+            {{ m.avatar(r.author) }}
+            <div><strong>{{ r.author }}</strong><span class="muted small">{{ r.service or 'Клиент студии' }}</span></div>
+          </figcaption>
+        </figure>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="container">
+    <div class="cta">
+      <div>
+        <h2>Есть идея проекта?</h2>
+        <p>Оформите заказ в личном кабинете — менеджер свяжется с вами в течение рабочего дня.</p>
+      </div>
+      <div class="btn-row">
+        <a class="btn btn--light btn--lg" href="{{ url_for('cabinet.order_new') }}">Оформить заказ</a>
+        <a class="btn btn--outline-light btn--lg" href="{{ url_for('main.contacts') }}">Задать вопрос</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

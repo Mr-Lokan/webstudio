@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}{{ work.title }} — портфолио WebCraft{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <nav class="breadcrumbs"><a href="{{ url_for('main.portfolio') }}">Портфолио</a>{% if work.category %} / <a href="{{ url_for('main.portfolio', category=work.category_slug) }}">{{ work.category }}</a>{% endif %}</nav>
+    <h1>{{ work.title }}</h1>
+  </div>
+</section>
+<section class="section section--tight">
+  <div class="container layout-aside">
+    <div>
+      <img class="work-cover" src="{{ url_for('static', filename='uploads/' ~ work.image) }}" alt="{{ work.title }}">
+      <article class="card prose">
+        <h2>О проекте</h2>
+        {{ work.description|nl2br }}
+      </article>
+    </div>
+    <aside class="card facts">
+      <dl>
+        {% if work.client %}<dt>Клиент</dt><dd>{{ work.client }}</dd>{% endif %}
+        {% if work.category %}<dt>Направление</dt><dd>{{ work.category }}</dd>{% endif %}
+        {% if work.year %}<dt>Год</dt><dd>{{ work.year }}</dd>{% endif %}
+        {% if work.url %}<dt>Сайт</dt><dd><a href="{{ work.url }}" target="_blank" rel="noopener nofollow">{{ work.url }}</a></dd>{% endif %}
+      </dl>
+      <a class="btn btn--primary btn--block" href="{{ url_for('cabinet.order_new', title='Проект как «' ~ work.title ~ '»') }}">Хочу похожий проект</a>
+    </aside>
+  </div>
+</section>
+{% if more %}
+<section class="section section--tight">
+  <div class="container">
+    <h2>Другие проекты</h2>
+    <div class="grid grid--3">{% for w in more %}{{ m.work_card(w) }}{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

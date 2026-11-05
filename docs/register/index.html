@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru" data-site-root="/webstudio">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Регистрация — WebCraft</title>
+  <meta name="description" content="WebCraft — студия веб-дизайна: разработка сайтов, интернет-магазинов, UI/UX дизайн и брендинг.">
+  <link rel="icon" href="/webstudio/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/webstudio/static/css/style.css">
+  
+</head>
+<body class="">
+
+<header class="header">
+  <div class="container header__inner">
+    <a class="logo" href="/webstudio/"><span class="logo__mark">W</span>WebCraft</a>
+    <button class="burger" type="button" aria-label="Меню" data-toggle-nav><span></span><span></span><span></span></button>
+    <nav class="nav" id="nav">
+      <a href="/webstudio/services/" class="">Услуги</a>
+      <a href="/webstudio/portfolio/" class="">Портфолио</a>
+      <a href="/webstudio/calculator/" class="">Калькулятор</a>
+      <a href="/webstudio/about/" class="">О студии</a>
+      <a href="/webstudio/contacts/" class="">Контакты</a>
+      <div class="nav__user">
+        
+          <a class="btn btn--sm btn--ghost" href="/webstudio/login/">Войти</a>
+          <a class="btn btn--sm btn--primary" href="/webstudio/register/">Регистрация</a>
+        
+      </div>
+    </nav>
+  </div>
+</header>
+
+
+  
+
+
+<main>
+  
+<section class="auth">
+  <form method="post" class="card auth__card form" novalidate>
+    <input type="hidden" name="csrf_token" value="2e555c958cd2426e899523cbafd96cba">
+    <h1>Регистрация</h1>
+    <p class="muted">Создайте личный кабинет клиента, чтобы оформлять и отслеживать заказы.</p>
+    <div class="form-row"><label>Имя и фамилия *<input type="text" name="name" value="" required maxlength="100" autocomplete="name"></label></div>
+    <div class="form-row"><label>E-mail *<input type="email" name="email" value="" required maxlength="120" autocomplete="email"></label></div>
+    <div class="form-row"><label>Телефон<input type="tel" name="phone" value="" maxlength="30" placeholder="+7 (___) ___-__-__" autocomplete="tel"></label></div>
+    <div class="form-row form-row--2">
+      <label>Пароль *<input type="password" name="password" required minlength="6" autocomplete="new-password"></label>
+      <label>Повторите пароль *<input type="password" name="password2" required minlength="6" autocomplete="new-password"></label>
+    </div>
+    <label class="check"><input type="checkbox" name="agree" > Я согласен(на) на обработку персональных данных</label>
+    <button class="btn btn--primary btn--block" type="submit">Зарегистрироваться</button>
+    <p class="center muted">Уже есть аккаунт? <a href="/webstudio/login/">Войти</a></p>
+  </form>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="container footer__grid">
+    <div>
+      <a class="logo logo--light" href="/webstudio/"><span class="logo__mark">W</span>WebCraft</a>
+      <p class="footer__text">Студия веб-дизайна полного цикла: от идеи и прототипа до запуска и продвижения.</p>
+    </div>
+    <div>
+      <h4>Студия</h4>
+      <a href="/webstudio/about/">О нас</a>
+      <a href="/webstudio/portfolio/">Портфолио</a>
+      <a href="/webstudio/contacts/">Контакты</a>
+    </div>
+    <div>
+      <h4>Клиентам</h4>
+      <a href="/webstudio/services/">Услуги и цены</a>
+      <a href="/webstudio/calculator/">Калькулятор стоимости</a>
+      <a href="/webstudio/local/">Личный кабинет</a>
+    </div>
+    <div>
+      <h4>Контакты</h4>
+      <span>+7 (900) 100-00-00</span>
+      <span>hello@webcraft.ru</span>
+      <span>г. Москва, ул. Дизайнеров, 15</span>
+    </div>
+  </div>
+  <div class="container footer__bottom">© 2026 WebCraft. Курсовой проект «Автоматизация студии веб-дизайна».</div>
+</footer>
+
+<script src="/webstudio/static/js/main.js"></script>
+
+<script src="/webstudio/static/js/static-pages.js"></script>
+</body>
+</html>

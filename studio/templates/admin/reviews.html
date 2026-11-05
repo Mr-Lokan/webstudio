@@ -1,0 +1,29 @@
+{% extends 'admin/base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Отзывы{% endblock %}
+{% block heading %}Модерация отзывов{% endblock %}
+{% block content %}
+<div class="stack">
+  {% for r in reviews %}
+    <section class="panel feedback {{ 'is-done' if r.is_approved }}">
+      <div class="feedback__head">
+        <div class="user-cell">{{ m.avatar(r.author, 'avatar--sm') }}<span><strong>{{ r.author }}</strong>
+          <small class="muted">{{ r.order_title or 'Заказ удалён' }}</small></span></div>
+        <div>{{ m.stars(r.rating) }} <span class="muted small">{{ r.created_at|date }}</span></div>
+      </div>
+      <p>{{ r.text }}</p>
+      <div class="btn-row">
+        {% if r.is_approved %}<span class="badge badge--done">Опубликован</span>{% else %}<span class="badge badge--review">Ожидает модерации</span>{% endif %}
+        <form method="post" action="{{ url_for('admin.review_toggle', review_id=r.id) }}" class="inline">
+          {{ m.csrf() }}<button class="btn btn--sm {{ 'btn--ghost' if r.is_approved else 'btn--success' }}" type="submit">{{ 'Скрыть с сайта' if r.is_approved else 'Опубликовать' }}</button>
+        </form>
+        <form method="post" action="{{ url_for('admin.review_delete', review_id=r.id) }}" class="inline" data-confirm="Удалить отзыв?">
+          {{ m.csrf() }}<button class="btn btn--sm btn--danger-ghost" type="submit">Удалить</button>
+        </form>
+      </div>
+    </section>
+  {% else %}
+    <section class="panel empty"><p class="muted">Отзывов пока нет.</p></section>
+  {% endfor %}
+</div>
+{% endblock %}

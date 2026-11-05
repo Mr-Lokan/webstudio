@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ru" data-site-root="/webstudio">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Калькулятор стоимости — WebCraft</title>
+  <meta name="description" content="WebCraft — студия веб-дизайна: разработка сайтов, интернет-магазинов, UI/UX дизайн и брендинг.">
+  <link rel="icon" href="/webstudio/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/webstudio/static/css/style.css">
+  
+</head>
+<body class="">
+
+<header class="header">
+  <div class="container header__inner">
+    <a class="logo" href="/webstudio/"><span class="logo__mark">W</span>WebCraft</a>
+    <button class="burger" type="button" aria-label="Меню" data-toggle-nav><span></span><span></span><span></span></button>
+    <nav class="nav" id="nav">
+      <a href="/webstudio/services/" class="">Услуги</a>
+      <a href="/webstudio/portfolio/" class="">Портфолио</a>
+      <a href="/webstudio/calculator/" class="is-active">Калькулятор</a>
+      <a href="/webstudio/about/" class="">О студии</a>
+      <a href="/webstudio/contacts/" class="">Контакты</a>
+      <div class="nav__user">
+        
+          <a class="btn btn--sm btn--ghost" href="/webstudio/login/">Войти</a>
+          <a class="btn btn--sm btn--primary" href="/webstudio/register/">Регистрация</a>
+        
+      </div>
+    </nav>
+  </div>
+</header>
+
+
+  
+
+
+<main>
+  
+<section class="page-head">
+  <div class="container">
+    <h1>Калькулятор стоимости проекта</h1>
+    <p class="muted">Предварительная оценка. Точную стоимость менеджер зафиксирует после согласования технического задания.</p>
+  </div>
+</section>
+<section class="section section--tight">
+  <div class="container layout-aside">
+    <form class="card calc" id="calc" onsubmit="return false">
+      <fieldset>
+        <legend>1. Тип проекта</legend>
+        <div class="options">
+          <label class="option"><input type="radio" name="type" value="25000" data-days="10" data-pages="1" data-label="Лендинг" checked><span><strong>Лендинг</strong><small>от 25 000 ₽</small></span></label>
+          <label class="option"><input type="radio" name="type" value="70000" data-days="30" data-pages="5" data-label="Корпоративный сайт"><span><strong>Корпоративный сайт</strong><small>от 70 000 ₽</small></span></label>
+          <label class="option"><input type="radio" name="type" value="120000" data-days="45" data-pages="10" data-label="Интернет-магазин"><span><strong>Интернет-магазин</strong><small>от 120 000 ₽</small></span></label>
+          <label class="option"><input type="radio" name="type" value="80000" data-days="30" data-pages="8" data-label="Дизайн мобильного приложения"><span><strong>Мобильное приложение</strong><small>от 80 000 ₽</small></span></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>2. Количество страниц / экранов: <output id="pagesOut">5</output></legend>
+        <input type="range" id="pages" min="1" max="50" value="5">
+        <p class="muted small">В базовую стоимость входит указанное в типе проекта число страниц, каждая дополнительная — 3 000 ₽.</p>
+      </fieldset>
+      <fieldset>
+        <legend>3. Дополнительные опции</legend>
+        <div class="checks">
+          <label><input type="checkbox" value="15000" data-label="разработка логотипа"> Разработка логотипа <span class="muted">+15 000 ₽</span></label>
+          <label><input type="checkbox" value="8000" data-label="копирайтинг"> Написание текстов <span class="muted">+8 000 ₽</span></label>
+          <label><input type="checkbox" value="15000" data-label="базовая SEO-оптимизация"> Базовая SEO-оптимизация <span class="muted">+15 000 ₽</span></label>
+          <label><input type="checkbox" value="20000" data-label="интеграция с CRM"> Интеграция с CRM <span class="muted">+20 000 ₽</span></label>
+          <label><input type="checkbox" value="15000" data-label="мультиязычность"> Мультиязычность <span class="muted">+15 000 ₽</span></label>
+          <label><input type="checkbox" value="12000" data-label="анимации и интерактив"> Анимации и интерактив <span class="muted">+12 000 ₽</span></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>4. Срочность</legend>
+        <div class="options options--inline">
+          <label class="option"><input type="radio" name="urgency" value="1" checked><span><strong>Стандартно</strong></span></label>
+          <label class="option"><input type="radio" name="urgency" value="1.3"><span><strong>Срочно</strong><small>+30 %, срок −30 %</small></span></label>
+        </div>
+      </fieldset>
+    </form>
+    <aside class="card order-box calc-result">
+      <div class="muted small">Предварительная стоимость</div>
+      <div class="order-box__price" id="total">—</div>
+      <div class="muted small">Ориентировочный срок</div>
+      <div class="order-box__term" id="days">—</div>
+      <a class="btn btn--primary btn--block" id="orderLink" href="/webstudio/local/" data-base="/webstudio/local/">Оформить заказ</a>
+      <p class="muted small">Параметры расчёта будут автоматически подставлены в форму заказа.</p>
+    </aside>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="container footer__grid">
+    <div>
+      <a class="logo logo--light" href="/webstudio/"><span class="logo__mark">W</span>WebCraft</a>
+      <p class="footer__text">Студия веб-дизайна полного цикла: от идеи и прототипа до запуска и продвижения.</p>
+    </div>
+    <div>
+      <h4>Студия</h4>
+      <a href="/webstudio/about/">О нас</a>
+      <a href="/webstudio/portfolio/">Портфолио</a>
+      <a href="/webstudio/contacts/">Контакты</a>
+    </div>
+    <div>
+      <h4>Клиентам</h4>
+      <a href="/webstudio/services/">Услуги и цены</a>
+      <a href="/webstudio/calculator/">Калькулятор стоимости</a>
+      <a href="/webstudio/local/">Личный кабинет</a>
+    </div>
+    <div>
+      <h4>Контакты</h4>
+      <span>+7 (900) 100-00-00</span>
+      <span>hello@webcraft.ru</span>
+      <span>г. Москва, ул. Дизайнеров, 15</span>
+    </div>
+  </div>
+  <div class="container footer__bottom">© 2026 WebCraft. Курсовой проект «Автоматизация студии веб-дизайна».</div>
+</footer>
+
+<script src="/webstudio/static/js/main.js"></script>
+
+<script src="/webstudio/static/js/static-pages.js"></script>
+</body>
+</html>

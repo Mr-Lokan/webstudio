@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}О студии — WebCraft{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <h1>О студии WebCraft</h1>
+    <p class="lead">Мы — команда дизайнеров и разработчиков, которая с 2016 года помогает бизнесу расти в интернете.</p>
+  </div>
+</section>
+<section class="section section--tight">
+  <div class="container grid grid--2 about-intro">
+    <div class="prose">
+      <p>Студия WebCraft работает по модели полного цикла: аналитика, проектирование, дизайн, разработка,
+        запуск и сопровождение. Мы не делаем «просто красиво» — каждый проект начинается с понимания целей бизнеса
+        и заканчивается измеримым результатом.</p>
+      <p>Для удобства клиентов вся работа над заказом ведётся в личном кабинете: там можно оформить заявку,
+        следить за статусом, переписываться с дизайнером, видеть историю оплат и принимать готовую работу.</p>
+    </div>
+    <div class="values">
+      <div class="card"><h3>Прозрачность</h3><p class="muted">Статус каждого заказа и все платежи — в личном кабинете.</p></div>
+      <div class="card"><h3>Сроки</h3><p class="muted">Фиксируем дедлайны в договоре и контролируем их в системе.</p></div>
+      <div class="card"><h3>Качество</h3><p class="muted">Двухэтапная проверка: внутренняя и приёмка клиентом.</p></div>
+      <div class="card"><h3>Поддержка</h3><p class="muted">Остаёмся на связи после запуска проекта.</p></div>
+    </div>
+  </div>
+</section>
+<section class="section section--alt">
+  <div class="container">
+    <div class="section__head"><div><span class="eyebrow">Команда</span><h2>Люди, которые делают проекты</h2></div></div>
+    <div class="grid grid--4">
+      {% for p in team %}
+        <div class="card team-card">
+          {{ m.avatar(p.name, 'avatar--xl') }}
+          <h3>{{ p.name }}</h3>
+          <div class="tag">{{ p.position }}</div>
+          {% if p.bio %}<p class="muted small">{{ p.bio }}</p>{% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'admin/base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Категории{% endblock %}
+{% block heading %}Категории{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel__head"><h2>Новая категория</h2></div>
+  <form method="post" class="form inline-form">
+    {{ m.csrf() }}
+    <input type="text" name="name" placeholder="Название *" required maxlength="80">
+    <input type="text" name="slug" placeholder="Адрес (латиницей, необязательно)" maxlength="80">
+    <input type="text" name="description" placeholder="Описание" maxlength="200">
+    <button class="btn btn--primary" type="submit">Добавить</button>
+  </form>
+</section>
+
+<section class="panel">
+  <div class="panel__head"><h2>Список категорий</h2></div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Название</th><th>Адрес (slug)</th><th>Описание</th><th class="num">Услуг</th><th class="num">Работ</th><th></th></tr></thead>
+      <tbody>
+      {% for c in categories %}
+        <tr>
+          <td colspan="3">
+            <form method="post" class="inline-form inline-form--row" id="cat{{ c.id }}">
+              {{ m.csrf() }}<input type="hidden" name="id" value="{{ c.id }}">
+              <input type="text" name="name" value="{{ c.name }}" required maxlength="80">
+              <input type="text" name="slug" value="{{ c.slug }}" maxlength="80">
+              <input type="text" name="description" value="{{ c.description or '' }}" maxlength="200">
+            </form>
+          </td>
+          <td class="num">{{ c.services_count }}</td>
+          <td class="num">{{ c.works_count }}</td>
+          <td class="actions">
+            <button class="btn btn--sm btn--ghost" type="submit" form="cat{{ c.id }}">Сохранить</button>
+            <form method="post" action="{{ url_for('admin.category_delete', category_id=c.id) }}" class="inline" data-confirm="Удалить категорию «{{ c.name }}»?">
+              {{ m.csrf() }}<button class="btn btn--sm btn--danger-ghost" type="submit">Удалить</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

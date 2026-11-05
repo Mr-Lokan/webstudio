@@ -1,0 +1,60 @@
+{% import '_macros.html' as m with context %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Панель управления{% endblock %} — WebCraft</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body class="admin">
+{% set ep = request.endpoint or '' %}
+<aside class="sidebar" id="sidebar">
+  <a class="logo logo--light" href="{{ url_for('admin.index') }}"><span class="logo__mark">W</span>WebCraft <small>CRM</small></a>
+  <nav class="sidebar__nav">
+    <span class="sidebar__group">Работа</span>
+    <a href="{{ url_for('admin.index') }}" class="{{ 'is-active' if ep == 'admin.index' }}"><i>◧</i>Дашборд</a>
+    <a href="{{ url_for('admin.orders') }}" class="{{ 'is-active' if ep.startswith('admin.order') }}"><i>☰</i>{{ 'Заказы' if is_admin else 'Мои заказы' }}
+      {% if badges.orders %}<b class="sidebar__badge">{{ badges.orders }}</b>{% endif %}</a>
+    {% if is_admin %}
+      <a href="{{ url_for('admin.feedback') }}" class="{{ 'is-active' if ep.startswith('admin.feedback') }}"><i>✉</i>Обращения
+        {% if badges.feedback %}<b class="sidebar__badge">{{ badges.feedback }}</b>{% endif %}</a>
+      <a href="{{ url_for('admin.reviews') }}" class="{{ 'is-active' if ep.startswith('admin.review') }}"><i>★</i>Отзывы
+        {% if badges.reviews %}<b class="sidebar__badge">{{ badges.reviews }}</b>{% endif %}</a>
+      <span class="sidebar__group">Контент сайта</span>
+      <a href="{{ url_for('admin.services') }}" class="{{ 'is-active' if ep.startswith('admin.service') }}"><i>◈</i>Услуги</a>
+      <a href="{{ url_for('admin.categories') }}" class="{{ 'is-active' if ep.startswith('admin.categor') }}"><i>▤</i>Категории</a>
+      <a href="{{ url_for('admin.portfolio') }}" class="{{ 'is-active' if ep.startswith('admin.portfolio') }}"><i>▣</i>Портфолио</a>
+      <span class="sidebar__group">Администрирование</span>
+      <a href="{{ url_for('admin.users') }}" class="{{ 'is-active' if ep.startswith('admin.user') }}"><i>☺</i>Пользователи</a>
+    {% endif %}
+  </nav>
+  <div class="sidebar__footer">
+    <a href="{{ url_for('main.index') }}" target="_blank"><i>↗</i>Открыть сайт</a>
+  </div>
+</aside>
+
+<div class="admin-main">
+  <header class="topbar">
+    <button class="burger burger--dark" type="button" aria-label="Меню" data-toggle-sidebar><span></span><span></span><span></span></button>
+    <div class="topbar__title">{% block heading %}{% endblock %}</div>
+    <div class="topbar__user">
+      <a href="{{ url_for('cabinet.profile') }}" class="topbar__profile">
+        {{ m.avatar(g.user.name, 'avatar--sm') }}
+        <span><strong>{{ g.user.name }}</strong><small>{{ ROLES[g.user.role] }}</small></span>
+      </a>
+      <form method="post" action="{{ url_for('auth.logout') }}" class="inline">
+        {{ m.csrf() }}<button class="btn btn--sm btn--ghost" type="submit">Выйти</button>
+      </form>
+    </div>
+  </header>
+  {% include '_flash.html' %}
+  <div class="admin-content">
+    {% block content %}{% endblock %}
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Услуги и цены — WebCraft{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <h1>Услуги и цены</h1>
+    <p class="muted">Итоговая стоимость зависит от объёма работ и фиксируется в договоре после согласования технического задания.</p>
+    <div class="chips">
+      <a class="chip {{ 'is-active' if not current }}" href="{{ url_for('main.services') }}">Все</a>
+      {% for c in categories %}
+        <a class="chip {{ 'is-active' if current == c.slug }}" href="{{ url_for('main.services', category=c.slug) }}">{{ c.name }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<section class="section section--tight">
+  <div class="container">
+    <div class="grid grid--3">
+      {% for s in services %}{{ m.service_card(s) }}{% else %}<p class="muted">В этой категории пока нет услуг.</p>{% endfor %}
+    </div>
+    <div class="note">
+      <strong>Не нашли подходящую услугу?</strong>
+      Воспользуйтесь <a href="{{ url_for('main.calculator') }}">калькулятором стоимости</a> или <a href="{{ url_for('main.contacts') }}">напишите нам</a> — подберём решение под вашу задачу.
+    </div>
+  </div>
+</section>
+{% endblock %}

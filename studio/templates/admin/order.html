@@ -1,0 +1,126 @@
+{% extends 'admin/base.html' %}
+{% import '_macros.html' as m with context %}
+{% block title %}Заказ №{{ order.id }}{% endblock %}
+{% block heading %}<a href="{{ url_for('admin.orders') }}" class="muted">Заказы</a> / №{{ order.id }}{% endblock %}
+{% block content %}
+<div class="order-head">
+  <div>
+    <h1>{{ order.title }}</h1>
+    <div class="muted">Создан {{ order.created_at|date(true) }} · изменён {{ order.updated_at|date(true) }}{% if order.service_title %} · {{ order.service_title }}{% endif %}</div>
+  </div>
+  <div class="order-head__badges">{{ m.status_badge(order.status) }} {{ m.payment_badge(order) }}</div>
+</div>
+
+<div class="detail-grid">
+  <div class="stack">
+    <section class="panel">
+      <div class="panel__head"><h2>Управление заказом</h2></div>
+      <form method="post" class="form form--grid">
+        {{ m.csrf() }}
+        <label>Статус
+          <select name="status">
+            {% for key in allowed_statuses %}
+              <option value="{{ key }}" {{ 'selected' if order.status == key }}>{{ ORDER_STATUSES[key] }}</option>
+            {% endfor %}
+            {% if order.status not in allowed_statuses %}
+              <option value="{{ order.status }}" selected>{{ ORDER_STATUSES[order.status] }}</option>
+            {% endif %}
+          </select>
+        </label>
+        {% if is_admin %}
+          <label>Исполнитель
+            <select name="designer_id">
+              <option value="">— не назначен —</option>
+              {% for d in designers %}
+                <option value="{{ d.id }}" {{ 'selected' if order.designer_id == d.id }}>{{ d.name }} ({{ d.position }})</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label>Стоимость, ₽<input type="number" name="price" min="0" step="500" value="{{ order.price or '' }}" placeholder="Бюджет клиента: {{ order.budget or '—' }}"></label>
+          <label>Срок сдачи<input type="date" name="deadline" value="{{ order.deadline or '' }}"></label>
+        {% else %}
+          <p class="muted small">Дизайнер может переводить заказ между этапами «Согласование ТЗ», «В работе» и «На проверке у клиента».</p>
+        {% endif %}
+        <div class="form--grid__actions"><button class="btn btn--primary" type="submit">Сохранить изменения</button></div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head"><h2>Техническое задание</h2></div>
+      <div class="prose">{{ order.description|nl2br }}</div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head"><h2>Переписка с клиентом</h2></div>
+      {{ m.comments_block(comments, url_for('admin.order_comment', order_id=order.id), true, 'Сообщение клиенту…') }}
+    </section>
+  </div>
+
+  <div class="stack">
+    <section class="panel">
+      <div class="panel__head"><h2>Клиент</h2></div>
+      <div class="user-cell user-cell--lg">{{ m.avatar(order.client_name) }}<span><strong>{{ order.client_name }}</strong><small class="muted">{{ order.client_email }}</small></span></div>
+      <dl class="facts-list">
+        <dt>Телефон</dt><dd>{{ order.client_phone or '—' }}</dd>
+        <dt>Бюджет клиента</dt><dd>{{ order.budget|money }}</dd>
+        <dt>Срок сдачи</dt><dd class="{{ 'text-danger' if is_overdue(order) }}">{{ order.deadline|date }}{% if is_overdue(order) %} (просрочен){% endif %}</dd>
+      </dl>
+    </section>
+
+    <section class="panel" id="payments">
+      <div class="panel__head"><h2>Оплата</h2></div>
+      <div class="pay-progress">
+        {% set pct = ((order.paid / order.price * 100) if order.price else 0) %}
+        <div class="pay-progress__bar"><div style="width: {{ [pct, 100]|min|round(1) }}%"></div></div>
+        <div class="pay-progress__text"><strong>{{ order.paid|money }}</strong> из {{ order.price|money }}</div>
+      </div>
+      <ul class="list">
+        {% for p in payments %}
+          <li>
+            <span>{{ p.created_at|date }} · {{ PAYMENT_METHODS[p.method] }}{% if p.note %}<br><small class="muted">{{ p.note }}</small>{% endif %}</span>
+            <span class="list__end"><strong>{{ p.amount|money }}</strong>
+              {% if is_admin %}
+                <form method="post" action="{{ url_for('admin.payment_delete', payment_id=p.id) }}" class="inline" data-confirm="Удалить платёж на {{ p.amount|money }}?">
+                  {{ m.csrf() }}<button class="icon-btn" type="submit" title="Удалить">×</button>
+                </form>
+              {% endif %}
+            </span>
+          </li>
+        {% else %}
+          <li class="muted">Платежей пока нет</li>
+        {% endfor %}
+      </ul>
+      {% if is_admin %}
+        <form method="post" action="{{ url_for('admin.order_payment', order_id=order.id) }}" class="form pay-form">
+          {{ m.csrf() }}
+          <div class="form-row form-row--2">
+            <input type="number" name="amount" min="1" placeholder="Сумма, ₽" required value="{{ (order.price - order.paid) if order.price and order.price > order.paid else '' }}">
+            <select name="method">{% for key, label in PAYMENT_METHODS.items() %}<option value="{{ key }}" {{ 'selected' if key == 'transfer' }}>{{ label }}</option>{% endfor %}</select>
+          </div>
+          <input type="text" name="note" placeholder="Комментарий (например, «Предоплата 50 %»)" maxlength="200">
+          <button class="btn btn--success btn--block" type="submit">Добавить платёж</button>
+        </form>
+      {% endif %}
+    </section>
+
+    <section class="panel">
+      <div class="panel__head"><h2>История статусов</h2></div>
+      {{ m.timeline(history) }}
+    </section>
+
+    {% if review %}
+      <section class="panel">
+        <div class="panel__head"><h2>Отзыв клиента</h2></div>
+        {{ m.stars(review.rating) }}
+        <p>{{ review.text }}</p>
+      </section>
+    {% endif %}
+
+    {% if is_admin %}
+      <form method="post" action="{{ url_for('admin.order_delete', order_id=order.id) }}" data-confirm="Удалить заказ №{{ order.id }} вместе с перепиской и платежами? Действие необратимо.">
+        {{ m.csrf() }}<button class="btn btn--danger-ghost btn--block" type="submit">Удалить заказ</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
