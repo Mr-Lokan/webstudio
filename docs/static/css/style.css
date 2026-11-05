@@ -411,11 +411,3 @@ input[type=range] { width: 100%; accent-color: var(--primary); }
   .chat__msg { max-width: 100%; }
   .chat__form { flex-direction: column; align-items: stretch; }
 }
-
-/* Статическая версия для GitHub Pages */
-.static-bar { background: #2d2654; color: #fff; font-size: 14px; text-align: center; padding: 8px 16px; }
-.static-bar a { color: #c9c2ff; text-decoration: underline; }
-.local-steps { margin: 0 0 8px; padding-left: 22px; line-height: 1.7; }
-.local-steps code, .local-table code { background: #f0efff; border-radius: 6px; padding: 2px 6px; font-size: 14px; }
-.local-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 15px; }
-.local-table th, .local-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
