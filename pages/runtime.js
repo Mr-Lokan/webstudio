@@ -137,7 +137,7 @@
       await syncfs(true);
       py.runPython("import sys\nsys.path[:0] = ['/app', '/app/site-packages']");
       api = py.pyimport('webapp');
-      api.boot(ROOT, store.get(SESSION_KEY));
+      if (api.boot(ROOT, store.get(SESSION_KEY))) store.remove(SESSION_KEY);
       await syncfs(false);
       active = true;
       demoNote();

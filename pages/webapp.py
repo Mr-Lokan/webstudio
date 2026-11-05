@@ -20,26 +20,43 @@ BASE_URL = 'http://localhost/'
 
 
 def _prepare_data():
+    """Готовит /data. Возвращает True, если демо-данные созданы заново."""
+    import hashlib
+    import sqlite3
+
+    initial = os.path.join(APP_DIR, 'initial.sql')
+    with open(initial, encoding='utf-8') as f:
+        script = f.read()
+    version = hashlib.sha256(script.encode('utf-8')).hexdigest()[:16]
+    marker = os.path.join(DATA_DIR, 'initial.version')
+    saved = open(marker).read().strip() if os.path.exists(marker) else None
+
+    # начальные данные сайта изменились: база посетителя создаётся заново
+    renewed = saved != version
+    if renewed:
+        reset()
     os.makedirs(UPLOADS, exist_ok=True)
     shipped = os.path.join(APP_DIR, 'studio', 'static', 'uploads')
     for name in os.listdir(shipped):
         target = os.path.join(UPLOADS, name)
         if not os.path.exists(target):
             shutil.copyfile(os.path.join(shipped, name), target)
-    initial = os.path.join(APP_DIR, 'initial.sql')
-    if not os.path.exists(DB_PATH) and os.path.exists(initial):
-        import sqlite3
-        with open(initial, encoding='utf-8') as f:
-            script = f.read()
+    if not os.path.exists(DB_PATH):
         con = sqlite3.connect(DB_PATH)
         con.executescript(script)
         con.close()
+        with open(marker, 'w') as f:
+            f.write(version)
+    return renewed
 
 
 def boot(base, session_cookie=None):
-    """Создаёт приложение. base - путь сайта на Pages, например /webstudio."""
+    """Создаёт приложение. base - путь сайта на Pages, например /webstudio.
+
+    Возвращает True, если демо-данные были созданы заново (старая сессия недействительна).
+    """
     global client, BASE, BASE_URL
-    _prepare_data()
+    renewed = _prepare_data()
 
     from config import Config
     from studio import create_app
@@ -53,8 +70,9 @@ def boot(base, session_cookie=None):
     client = app.test_client()
     BASE = base
     BASE_URL = 'http://localhost' + base + '/'
-    if session_cookie:
+    if session_cookie and not renewed:
         client.set_cookie('session', session_cookie)
+    return renewed
 
 
 def handle(method, url, content_type=None, body=None):

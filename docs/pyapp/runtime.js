@@ -10,7 +10,7 @@
   'use strict';
 
   var ROOT = document.documentElement.getAttribute('data-site-root') || '';
-  var VERSION = 'dc6c48198a';
+  var VERSION = '715d96bcc2';
   var SHIPPED_UPLOADS = ["portfolio-1.svg", "portfolio-2.svg", "portfolio-3.svg", "portfolio-4.svg", "portfolio-5.svg", "portfolio-6.svg", "portfolio-7.svg", "portfolio-8.svg", "portfolio-9.svg"];
   var SESSION_KEY = 'webcraft.session';
   var STATIC_PREFIX = ROOT + '/static/';
@@ -137,7 +137,7 @@
       await syncfs(true);
       py.runPython("import sys\nsys.path[:0] = ['/app', '/app/site-packages']");
       api = py.pyimport('webapp');
-      api.boot(ROOT, store.get(SESSION_KEY));
+      if (api.boot(ROOT, store.get(SESSION_KEY))) store.remove(SESSION_KEY);
       await syncfs(false);
       active = true;
       demoNote();
